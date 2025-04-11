@@ -7,6 +7,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.preprocessing import Normalizer
 
+# 创建logger实例
+logger = logging.getLogger(__name__)
+
 # 向量化器参数配置
 VECTORIZER_PARAMS = {
     "tfidf": {
@@ -46,7 +49,7 @@ def train_model(
 
     # 记录处理时间，用于性能分析
     start_time = time.time()
-    logging.info(f"开始训练 {method} 向量化模型...")
+    logger.info(f"开始训练 {method} 向量化模型...")
 
     # 根据指定的方法选择合适的向量化器
     vectorizer_class = TfidfVectorizer if method == "tfidf" else CountVectorizer
@@ -55,7 +58,7 @@ def train_model(
     # 对数据框中的文本列进行向量化处理
     try:
         feature_matrix = vectorizer.fit_transform(df[text_column])
-        logging.info(f"特征矩阵大小: {feature_matrix.shape}")
+        logger.info(f"特征矩阵大小: {feature_matrix.shape}")
 
         # 应用L2归一化处理CountVectorizer的输出
         if method == "count":
@@ -72,11 +75,11 @@ def train_model(
         indices = pd.Series(df["name"].values, index=df.index)
 
         end_time = time.time()
-        logging.info(f"{method} 模型训练完成，耗时: {end_time - start_time:.2f}秒")
+        logger.info(f"{method} 模型训练完成，耗时: {end_time - start_time:.2f}秒")
 
         return vectorizer, indices, cosine_sim
     except Exception as e:
-        logging.error(f"{method} 模型训练失败: {str(e)}")
+        logger.error(f"{method} 模型训练失败: {str(e)}")
         raise
 
 
@@ -124,5 +127,5 @@ def get_recommendations(
 
         return recommendations
     except Exception as e:
-        logging.error(f"生成推荐时出错: {str(e)}")
+        logger.error(f"生成推荐时出错: {str(e)}")
         raise

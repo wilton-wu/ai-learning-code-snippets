@@ -9,6 +9,9 @@ import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 
+# 创建logger实例
+logger = logging.getLogger(__name__)
+
 # 确保nltk数据已下载
 try:
     nltk.data.find("corpora/stopwords")
@@ -38,26 +41,26 @@ def load_data(file_path: str) -> pd.DataFrame:
         df = pd.read_csv(file_path, encoding="latin-1")
 
         total_rows = len(df)
-        logging.info(f"开始处理 {total_rows} 条酒店描述文本...")
+        logger.info(f"开始处理 {total_rows} 条酒店描述文本...")
 
         # 添加处理进度跟踪
-        logging.info("文本清洗开始 | 开始时间: %s", time.strftime("%Y-%m-%d %H:%M:%S"))
+        logger.info("文本清洗开始 | 开始时间: %s", time.strftime("%Y-%m-%d %H:%M:%S"))
         df["desc_clean"] = df["desc"].apply(clean_text)
-        logging.info("文本清洗完成 | 总耗时: %.2f秒", time.time() - start_time)
+        logger.info("文本清洗完成 | 总耗时: %.2f秒", time.time() - start_time)
 
         # 记录处理结果样例
         sample_data = df["desc_clean"].sample(3).tolist()
-        logging.info(
+        logger.info(
             "清洗后文本样例:\n%s",
             "\n".join(f"{i + 1}. {text[:50]}..." for i, text in enumerate(sample_data)),
         )
 
         return df
     except pd.errors.EmptyDataError:
-        logging.error(f"数据文件 {file_path} 为空")
+        logger.error(f"数据文件 {file_path} 为空")
         raise
     except pd.errors.ParserError:
-        logging.error(f"数据文件 {file_path} 解析错误")
+        logger.error(f"数据文件 {file_path} 解析错误")
         raise
 
 
@@ -93,11 +96,11 @@ def get_top_ngrams(
         包含(词汇, 频次)的元组列表
     """
     if corpus.empty:
-        logging.warning("输入的文本语料为空")
+        logger.warning("输入的文本语料为空")
         return []
 
     # 添加进度日志
-    logging.info(f"开始提取 {ngram_range} 范围的n-gram...")
+    logger.info(f"开始提取 {ngram_range} 范围的n-gram...")
 
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words="english")
     try:
@@ -112,8 +115,8 @@ def get_top_ngrams(
         word_idx = np.argsort(sum_words.A1)[-top_k:][::-1]  # 使用.A1获取展平后的密集数组
         top_words = [(list(vectorizer.vocabulary_.keys())[list(vectorizer.vocabulary_.values()).index(i)], sum_words[0, i]) for i in word_idx]
 
-        logging.info(f"成功提取 {len(top_words)} 个高频n-gram")
+        logger.info(f"成功提取 {len(top_words)} 个高频n-gram")
         return top_words
     except Exception as e:
-        logging.error(f"提取n-gram时出错: {str(e)}")
+        logger.error(f"提取n-gram时出错: {str(e)}")
         return []

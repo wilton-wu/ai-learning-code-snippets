@@ -7,6 +7,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+# 创建logger实例
+logger = logging.getLogger(__name__)
+
 # 中文显示配置 - 使用更好的中文字体支持
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "Arial"]
 plt.rcParams["font.size"] = 12
@@ -60,7 +63,7 @@ def plot_top_ngrams(
         dpi: 图像分辨率
     """
     if not ngrams:
-        logging.warning("没有n-gram数据可供可视化")
+        logger.warning("没有n-gram数据可供可视化")
         return
 
     try:
@@ -102,11 +105,11 @@ def plot_top_ngrams(
 
         # 保存图表
         plt.savefig(output_path, dpi=dpi, bbox_inches="tight")
-        logging.info(f"高频n-gram词汇分布图已保存至: {output_path}")
+        logger.info(f"高频n-gram词汇分布图已保存至: {output_path}")
 
         plt.close()
     except Exception as e:
-        logging.error(f"可视化生成失败: {str(e)}")
+        logger.error(f"可视化生成失败: {str(e)}")
 
 
 def plot_similarity_matrix(
@@ -130,7 +133,7 @@ def plot_similarity_matrix(
         dpi: 图像分辨率
     """
     if matrix.size == 0 or len(hotel_names) == 0:
-        logging.warning("没有相似度数据可供可视化")
+        logger.warning("没有相似度数据可供可视化")
         return
 
     try:
@@ -176,8 +179,8 @@ def plot_similarity_matrix(
 
         # 保存图表
         plt.savefig(output_path, dpi=dpi, bbox_inches="tight")
-        logging.info(f"相似度矩阵图已保存至: {output_path}")
+        logger.info(f"相似度矩阵图已保存至: {output_path}")
 
         plt.close()
     except Exception as e:
-        logging.error(f"相似度矩阵可视化失败: {str(e)}")
+        logger.error(f"相似度矩阵可视化失败: {str(e)}")
