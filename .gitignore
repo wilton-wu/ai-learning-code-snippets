@@ -173,5 +173,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# 数据库文件
+# 数据文件
 *.db
+*.pdf
+.vscode/

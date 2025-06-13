@@ -1,0 +1,8 @@
+python-dotenv==1.1.0
+openai==1.73.0
+langchain==0.3.25
+langchain-openai==0.3.16
+langchain-community==0.3.24
+langchain-text-splitters==0.3.8
+langgraph==0.4.8
+pymupdf==1.26.1
